@@ -15,10 +15,10 @@ jobs:
       - name: Apply Helm template
         run: |
           helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
-          helm fetch --untar --untardir ./helm fdk/comment-service
-          helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/digdir-fdk-infra/comment-service:${{ github.event.client_payload.sha }}" \
-          -f ./helm/comment-service/values/demo.yaml \
-          ./helm/comment-service/ > ./kubectlapply.yaml
+          helm fetch --untar --untardir ./helm fdk/catalog-comments-service
+          helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/digdir-fdk-infra/catalog-comments-service:${{ github.event.client_payload.sha }}" \
+          -f ./helm/catalog-comments-service/values/demo.yaml \
+          ./helm/catalog-comments-service/ > ./kubectlapply.yaml
           chmod o+w ./kubectlapply.yaml
           cat kubectlapply.yaml
 
@@ -32,9 +32,9 @@ jobs:
         run: |
           gcloud container clusters get-credentials digdir-fdk-dev --region europe-north1-a --project digdir-fdk-dev
           kubectl apply -f ./kubectlapply.yaml --force
-          if ! kubectl --namespace=demo rollout status deployment comment-service; then
-            kubectl --namespace=demo rollout undo deployment comment-service
-            kubectl --namespace=demo rollout status deployment comment-service
+          if ! kubectl --namespace=demo rollout status deployment catalog-comments-service; then
+            kubectl --namespace=demo rollout undo deployment catalog-comments-service
+            kubectl --namespace=demo rollout status deployment catalog-comments-service
             exit 1
           fi
 
@@ -44,7 +44,7 @@ jobs:
           mention: 'channel'
           if_mention: failure
           status: ${{ job.status }}
-          author_name: 'Application: comment-service | Environment: demo'
+          author_name: 'Application: catalog-comments-service | Environment: demo'
           fields: commit,author,workflow
         env:
           GITHUB_TOKEN: ${{ github.token }}
