@@ -1,1 +1,1 @@
-# comment-service
+# catalog-comments-service
