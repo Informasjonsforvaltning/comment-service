@@ -1,5 +1,16 @@
 package no.digdir.catalog_comments_service.utils
 
+import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import no.digdir.catalog_comments_service.model.Comment
+import no.digdir.catalog_comments_service.model.CommentDBO
+import no.digdir.catalog_comments_service.model.UserDBO
+import no.digdir.catalog_comments_service.utils.ApiTestContext.Companion.mongoContainer
+import no.fdk.catalog_comments_service.utils.*
+import org.bson.codecs.configuration.CodecRegistries
+import org.bson.codecs.pojo.PojoCodecProvider
 import org.springframework.http.*
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.HttpClientErrorException
@@ -7,6 +18,7 @@ import org.springframework.web.client.RestTemplate
 import java.io.BufferedReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.time.LocalDateTime
 
 
 fun apiGet(port: Int, endpoint: String, acceptHeader: String?): Map<String,Any> {
@@ -80,3 +92,44 @@ fun authorizedRequest(
     }
 
 }
+
+fun populate() {
+    val connectionString = ConnectionString("mongodb://${MONGO_USER}:${MONGO_PASSWORD}@localhost:${mongoContainer.getMappedPort(MONGO_PORT)}/$MONGO_DB_NAME?authSource=admin&authMechanism=SCRAM-SHA-1")
+    val pojoCodecRegistry = CodecRegistries.fromRegistries(
+        MongoClientSettings.getDefaultCodecRegistry(), CodecRegistries.fromProviders(
+            PojoCodecProvider.builder().automatic(true).build()))
+
+    val client: MongoClient = MongoClients.create(connectionString)
+    val mongoDatabase = client.getDatabase(MONGO_DB_NAME).withCodecRegistry(pojoCodecRegistry)
+
+    val commentCollection = mongoDatabase.getCollection("comment")
+    commentCollection.deleteMany(org.bson.Document())
+    commentCollection.insertMany(commentDbPopulation())
+
+    val userCollection = mongoDatabase.getCollection("user")
+    userCollection.deleteMany(org.bson.Document())
+    userCollection.insertMany(userDbPopulation())
+
+    client.close()
+}
+
+private fun Comment.mapBDO(userId: String): org.bson.Document =
+    org.bson.Document()
+        .append("_id", id)
+        .append("createdDate", LocalDateTime.now())
+        .append("topicId", TOPIC_ID)
+        .append("orgNumber", ORG_NUMBER)
+        .append("user", userId)
+        .append("comment", comment)
+
+fun commentDbPopulation() = listOf(COMMENT_0, COMMENT_1, COMMENT_2, COMMENT_WRONG_ORG)
+    .map { it.mapBDO("1924782563") }
+
+fun userDbPopulation() = listOf(USER_1)
+    .map { it.mapBDO() }
+
+private fun UserDBO.mapBDO(): org.bson.Document =
+    org.bson.Document()
+        .append("_id", id)
+        .append("name", name)
+        .append("email", email)
