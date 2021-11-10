@@ -5,7 +5,6 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import no.digdir.catalog_comments_service.model.Comment
-import no.digdir.catalog_comments_service.model.CommentDBO
 import no.digdir.catalog_comments_service.model.UserDBO
 import no.digdir.catalog_comments_service.utils.ApiTestContext.Companion.mongoContainer
 import no.fdk.catalog_comments_service.utils.*
@@ -105,6 +104,7 @@ fun populate() {
     val commentCollection = mongoDatabase.getCollection("comment")
     commentCollection.deleteMany(org.bson.Document())
     commentCollection.insertMany(commentDbPopulation())
+    commentCollection.insertMany(commentWrongUserDbPopulation())
 
     val userCollection = mongoDatabase.getCollection("user")
     userCollection.deleteMany(org.bson.Document())
@@ -125,7 +125,10 @@ private fun Comment.mapBDO(userId: String): org.bson.Document =
 fun commentDbPopulation() = listOf(COMMENT_0, COMMENT_1, COMMENT_2, COMMENT_WRONG_ORG)
     .map { it.mapBDO("1924782563") }
 
-fun userDbPopulation() = listOf(USER_1)
+fun commentWrongUserDbPopulation() = listOf(COMMENT_WRONG_USER)
+    .map { it.mapBDO("123") }
+
+fun userDbPopulation() = listOf(USER_1, WRONG_USER)
     .map { it.mapBDO() }
 
 private fun UserDBO.mapBDO(): org.bson.Document =

@@ -42,3 +42,10 @@ fun Comment.mapForCreation(orgNumber: String, topicId: String, user: String): Co
         comment = comment
     )
 }
+
+
+
+fun CommentDBO.updateLastChanged(): CommentDBO =
+    copy(
+        lastChangedDate = LocalDateTime.now()
+    )

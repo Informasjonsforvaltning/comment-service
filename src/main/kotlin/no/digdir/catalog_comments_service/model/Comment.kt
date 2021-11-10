@@ -17,6 +17,7 @@ data class CommentDBO(
     @JsonSerialize(using = LocalDateTimeSerializer::class)
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)
     val createdDate: LocalDateTime,
+    val lastChangedDate: LocalDateTime? = null,
     val topicId:String?,
     val orgNumber:String?,
     var user:String?,
@@ -27,6 +28,7 @@ data class CommentDBO(
 data class Comment(
     val id:String? = null,
     val createdDate: LocalDateTime? = null,
+    val lastChangedDate: LocalDateTime? = null,
     val topicId:String? = null,
     val orgNumber:String? = null,
     var user:Optional<UserDBO>? = null,
