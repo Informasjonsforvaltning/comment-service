@@ -35,6 +35,11 @@ val COMMENT_2 = Comment(
     comment = "Kommentar med annen topicId"
 )
 
+val COMMENT_WRONG_USER = Comment(
+    id = "comment-wrong-user",
+    comment = "Kommentar med feil bruker"
+)
+
 val COMMENT_WRONG_ORG = Comment(
     id = "id-wrong-org",
     comment = "Kommentar"
@@ -50,8 +55,18 @@ val COMMENT_TO_BE_CREATED_1 = Comment(
     comment = "Kommentar"
 )
 
+val COMMENT_TO_BE_UPDATED = Comment(
+    comment = "Oppdatert kommentar"
+)
+
 val USER_1 = UserDBO(
     id = "1924782563",
     name = "TEST USER",
     email = "test@test.no"
+)
+
+val WRONG_USER = UserDBO(
+    id = "123",
+    name = "WRONG TEST USER",
+    email = "wrong@test.no"
 )

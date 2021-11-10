@@ -6,8 +6,8 @@ import no.digdir.catalog_comments_service.model.UserDBO
 import no.digdir.catalog_comments_service.repository.CommentDAO
 import no.digdir.catalog_comments_service.repository.UserDAO
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.lang.Exception
 
 private val logger = LoggerFactory.getLogger(CommentService::class.java)
 
@@ -45,4 +45,16 @@ class CommentService (private val commentDAO: CommentDAO, private val userDAO: U
     fun getCommentsByOrgNumberAndTopicId(orgNumber: String, topicId: String): List<Comment> =
         commentDAO.findCommentsByOrgNumberAndTopicId(orgNumber, topicId)
             .map { it.toDTO(userDAO.findById(it.user)) }
+
+    fun getCommentDBO(id: String): CommentDBO? =
+        commentDAO.findByIdOrNull(id)
+
+    fun updateComment(commentId: String, obj: Comment, userId: String): Comment? =
+        commentDAO.findByIdOrNull(commentId)
+            ?.copy(
+                comment = obj.comment ?: ""
+            )
+            ?.updateLastChanged()
+            ?.let { commentDAO.save(it) }
+            ?.let { it.toDTO(userDAO.findById(userId)) }
 }

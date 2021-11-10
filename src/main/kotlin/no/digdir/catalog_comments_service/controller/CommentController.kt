@@ -53,6 +53,35 @@ class CommentController (private val endpointPermissions: EndpointPermissions, p
             else -> ResponseEntity<List<Comment>>(commentService.getCommentsByOrgNumberAndTopicId(orgNumber, topicId), HttpStatus.OK)
         }
     }
+
+    @PutMapping(
+        value = ["/{commentId}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun updateComment(
+        @AuthenticationPrincipal jwt: Jwt,
+        @PathVariable orgNumber: String,
+        @PathVariable("commentId") commentId: String,
+        @RequestBody comment: Comment
+    ): ResponseEntity<Comment> {
+        val commentDBO = commentService.getCommentDBO(commentId)
+        val userId = endpointPermissions.getUserId(jwt)
+        return when {
+            commentDBO == null -> ResponseEntity(HttpStatus.NOT_FOUND)
+            userId == null -> ResponseEntity(HttpStatus.UNAUTHORIZED)
+            userId != commentDBO.user -> ResponseEntity(HttpStatus.FORBIDDEN)
+            !endpointPermissions.hasOrgReadPermission(jwt, orgNumber) ->
+                ResponseEntity(HttpStatus.FORBIDDEN)
+            comment.comment == null -> ResponseEntity(HttpStatus.BAD_REQUEST)
+            else -> {
+                logger.info("updating comment for ${commentId}")
+                commentService.updateComment(commentId, comment, userId)
+                    ?.let{ ResponseEntity(it, HttpStatus.OK) }
+                    ?: ResponseEntity(HttpStatus.NOT_FOUND)
+            }
+        }
+    }
 }
 
 private fun locationHeaderForCreated(comment: Comment): HttpHeaders =
