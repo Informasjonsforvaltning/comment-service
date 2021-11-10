@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.digdir.catalog_comments_service.model.Comment
 import no.digdir.catalog_comments_service.utils.ApiTestContext
 import no.digdir.catalog_comments_service.utils.authorizedRequest
 import no.fdk.catalog_comments_service.utils.*
@@ -121,5 +122,50 @@ class CommentIntegration : ApiTestContext() {
         )
 
         assertEquals(HttpStatus.OK.value(), rsp["status"])
+    }
+
+    @Test
+    fun `Update unauthorized when access token is not included`() {
+        val rsp = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_0.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            null, HttpMethod.PUT
+        )
+
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), rsp["status"])
+    }
+
+    @Test
+    fun `Update forbidden when comment has another user`() {
+        val rsp = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_WRONG_USER.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            JwtToken(Access.ORG_READ).toString(), HttpMethod.PUT
+        )
+
+        assertEquals(HttpStatus.FORBIDDEN.value(), rsp["status"])
+    }
+
+    @Test
+    fun `Ok - Updated - for read access`() {
+        val rsp = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_0.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            JwtToken(Access.ORG_READ).toString(), HttpMethod.PUT
+        )
+        assertEquals(HttpStatus.OK.value(), rsp["status"])
+
+        val updatedComment = mapper.readValue(rsp["body"] as String, Comment::class.java)
+        assertEquals(updatedComment.comment, COMMENT_TO_BE_UPDATED.comment)
+    }
+
+    @Test
+    fun `Ok - Updated - for write access`() {
+        val rsp = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_1.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            JwtToken(Access.ORG_WRITE).toString(), HttpMethod.PUT
+        )
+
+        assertEquals(HttpStatus.OK.value(), rsp["status"])
+
+        val updatedComment = mapper.readValue(rsp["body"] as String, Comment::class.java)
+        assertEquals(updatedComment.comment, COMMENT_TO_BE_UPDATED.comment)
     }
 }
