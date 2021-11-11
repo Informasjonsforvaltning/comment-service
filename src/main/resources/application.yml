@@ -6,9 +6,15 @@ logging:
   level.org.apache.jena: ERROR
 server:
   port: 8080
+spring:
+  security.oauth2.resourceserver.jwt:
+    jwk-set-uri: ${OIDC_JWKS:https://sso.staging.fellesdatakatalog.digdir.no/auth/realms/fdk/protocol/openid-connect/certs}
+    issuer-uri: ${OIDC_ISSUER:https://sso.staging.fellesdatakatalog.digdir.no/auth/realms/fdk}
 ---
 spring:
   config.activate.on-profile: develop
+  security.oauth2.resourceserver.jwt.jwk-set-uri: https://sso.staging.fellesdatakatalog.digdir.no/auth/realms/fdk/protocol/openid-connect/certs
 ---
 spring:
   config.activate.on-profile: integration-test
+  security.oauth2.resourceserver.jwt.jwk-set-uri: http://localhost:5000/auth/realms/fdk/protocol/openid-connect/certs

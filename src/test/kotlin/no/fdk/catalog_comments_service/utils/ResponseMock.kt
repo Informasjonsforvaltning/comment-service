@@ -2,6 +2,7 @@ package no.digdir.catalog_comments_service.utils
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import no.fdk.concept_catalog.utils.jwk.JwkStore
 
 const val LOCAL_SERVER_PORT = 5000
 
@@ -11,7 +12,8 @@ fun startMockServer() {
     if(!mockserver.isRunning) {
         mockserver.stubFor(get(urlEqualTo("/ping"))
             .willReturn(aResponse().withStatus(200)))
-
+        mockserver.stubFor(get(urlEqualTo("/auth/realms/fdk/protocol/openid-connect/certs"))
+            .willReturn(okJson(JwkStore.get())))
         mockserver.start()
     }
 }

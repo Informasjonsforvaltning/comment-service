@@ -1,11 +1,13 @@
 package no.digdir.catalog_comments_service
 
-import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-open class Application
+@ConfigurationPropertiesScan
+open class CommentApplication
 
 fun main(args: Array<String>) {
-    SpringApplication.run(Application::class.java, *args)
+    runApplication<CommentApplication>(*args)
 }
