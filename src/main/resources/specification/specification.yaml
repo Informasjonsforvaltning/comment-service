@@ -1,0 +1,173 @@
+openapi: 3.0.2
+info:
+  description: Kommentartjeneste
+  version: '2.0.0'
+  title: Kommentar API
+  contact:
+    name: Digitaliseringsdirektoratet
+    url: 'https://fellesdatakatalog.digdir.no'
+    email: fellesdatakatalog@digdir.no
+  license:
+    name: License of API
+    url: 'http://data.norge.no/nlod/no/2.0'
+tags:
+  - name: catalog-comments-service
+    description: Kommentar API
+paths:
+  /{orgNumber}/{topicId}/comment:
+    post:
+      tags:
+        - catalog-comments-service
+      description: opprette ny kommentar
+      operationId: createComment
+      parameters:
+        - name: orgNumber
+          in: path
+          description: organisasjonsnummer
+          required: true
+          schema:
+            type: string
+        - name: topicId
+          in: path
+          description: Topic id
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: url til den nye kommentaren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+    get:
+      tags:
+        - catalog-comments-service
+      description: returnerer alle kommentarer
+      operationId: getComments
+      parameters:
+        - name: orgNumber
+          in: path
+          description: organisasjonsnummer
+          required: true
+          schema:
+            type: string
+        - name: topicId
+          in: path
+          description: Topic id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+  /{orgNumber}/{topicId}/comment/{id}:
+    put:
+      tags:
+        - catalog-comments-service
+      description: Oppdatere en kommentar
+      operationId: updateComment
+      parameters:
+        - name: orgNumber
+          in: path
+          description: organisasjonsnummer
+          required: true
+          schema:
+            type: string
+        - name: topicId
+          in: path
+          description: Topic id
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Comment id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+    delete:
+      tags:
+        - catalog-comments-service
+      description: slette en kommentar
+      operationId: deleteCommentById
+      parameters:
+        - name: orgNumber
+          in: path
+          description: organisasjonsnummer
+          required: true
+          schema:
+            type: string
+        - name: topicId
+          in: path
+          description: Topic id
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Comment id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+components:
+  schemas:
+    User:
+      type: object
+      description: Bruker
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+    Comment:
+      type: object
+      description: Kommentar
+      properties:
+        id:
+          type: string
+          description: system-generert id (GUID)
+        createdDate:
+          type: string
+        lastChangedDate:
+          type: string
+        topicId:
+          type: string
+        orgNumber:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        comment:
+          type: string
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+security:
+  - bearerAuth: []
