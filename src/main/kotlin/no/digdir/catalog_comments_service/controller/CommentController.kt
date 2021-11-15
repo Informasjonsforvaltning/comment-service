@@ -82,6 +82,30 @@ class CommentController (private val endpointPermissions: EndpointPermissions, p
             }
         }
     }
+
+    @DeleteMapping(
+        value = ["/{commentId}"]
+    )
+    fun deleteComment(
+        @AuthenticationPrincipal jwt: Jwt,
+        @PathVariable orgNumber: String,
+        @PathVariable("commentId") commentId: String,
+    ): ResponseEntity<String> {
+        val commentDBO = commentService.getCommentDBO(commentId)
+        val userId = endpointPermissions.getUserId(jwt)
+        return when {
+            commentDBO == null -> ResponseEntity(HttpStatus.NOT_FOUND)
+            userId == null -> ResponseEntity(HttpStatus.UNAUTHORIZED)
+            userId != commentDBO.user -> ResponseEntity(HttpStatus.FORBIDDEN)
+            !endpointPermissions.hasOrgReadPermission(jwt, orgNumber) ->
+                ResponseEntity(HttpStatus.FORBIDDEN)
+            else -> {
+                logger.info("deleing comment ${commentId}")
+                commentService.deleteComment(commentDBO)
+                ResponseEntity(commentId, HttpStatus.OK)
+            }
+        }
+    }
 }
 
 private fun locationHeaderForCreated(comment: Comment): HttpHeaders =
