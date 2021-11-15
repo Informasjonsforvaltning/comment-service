@@ -122,7 +122,7 @@ private fun Comment.mapBDO(userId: String): org.bson.Document =
         .append("user", userId)
         .append("comment", comment)
 
-fun commentDbPopulation() = listOf(COMMENT_0, COMMENT_1, COMMENT_2, COMMENT_WRONG_ORG)
+fun commentDbPopulation() = listOf(COMMENT_0, COMMENT_1, COMMENT_2, COMMENT_WRONG_ORG, COMMENT_TO_BE_DELETED)
     .map { it.mapBDO("1924782563") }
 
 fun commentWrongUserDbPopulation() = listOf(COMMENT_WRONG_USER)

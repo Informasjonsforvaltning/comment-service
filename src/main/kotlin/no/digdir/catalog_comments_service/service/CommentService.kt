@@ -57,4 +57,7 @@ class CommentService (private val commentDAO: CommentDAO, private val userDAO: U
             ?.updateLastChanged()
             ?.let { commentDAO.save(it) }
             ?.let { it.toDTO(userDAO.findById(userId)) }
+
+    fun deleteComment(comment: CommentDBO) =
+        commentDAO.delete(comment)
 }

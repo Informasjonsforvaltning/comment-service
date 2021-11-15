@@ -59,6 +59,11 @@ val COMMENT_TO_BE_UPDATED = Comment(
     comment = "Oppdatert kommentar"
 )
 
+val COMMENT_TO_BE_DELETED = Comment(
+    id = "comment-to-be-deleted",
+    comment = "Slett kommentaren 1"
+)
+
 val USER_1 = UserDBO(
     id = "1924782563",
     name = "TEST USER",

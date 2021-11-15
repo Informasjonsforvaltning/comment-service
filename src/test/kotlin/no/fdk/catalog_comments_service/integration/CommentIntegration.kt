@@ -169,4 +169,41 @@ class CommentIntegration : ApiTestContext() {
         val updatedComment: Comment = mapper.readValue(rsp["body"] as String)
         assertEquals(updatedComment.comment, COMMENT_TO_BE_UPDATED.comment)
     }
+
+    @Test
+    fun `Delete forbidden when comment has another user`() {
+        val rsp = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_WRONG_USER.id}", port, "",
+            JwtToken(Access.ORG_READ).toString(), HttpMethod.DELETE
+        )
+
+        assertEquals(HttpStatus.FORBIDDEN.value(), rsp["status"])
+    }
+
+    @Test
+    fun `Ok - Deleted - for read access`() {
+        val before = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
+        )
+
+        val rsp = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_TO_BE_DELETED.id}", port, "",
+            JwtToken(Access.ORG_READ).toString(), HttpMethod.DELETE
+        )
+
+        assertEquals(HttpStatus.OK.value(), rsp["status"])
+
+        val deletedComment = rsp["body"] as String
+        assertEquals(deletedComment, COMMENT_TO_BE_DELETED.id)
+
+        val after = authorizedRequest(
+            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
+        )
+
+        val beforeList: List<Comment> = mapper.readValue(before["body"] as String)
+        val afterList: List<Comment> = mapper.readValue(after["body"] as String)
+        assertEquals(beforeList.size - 1, afterList.size)
+    }
 }
