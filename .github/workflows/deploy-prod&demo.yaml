@@ -8,7 +8,7 @@ on:
 jobs:
   build-test-and-deploy-production:
     name: Call reusable workflow on merge to main branch
-    uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy-maven.yaml@test/hos/staging-maven-deploy
+    uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy-maven.yaml@main
     with:
       app_name: catalog-comments-service
       caller_sha: ${{ github.sha }}
@@ -24,19 +24,17 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   deploy-to-demo:
+    name: Deploy latest production image to demo environment if prod-deploy is successful
     needs: build-test-and-deploy-production
-    name: Call reusable workflow on merge to main branch
-    uses: Informasjonsforvaltning/workflows/.github/workflows/deploy.yaml@test/hos/staging-maven-deploy
+    uses: Informasjonsforvaltning/workflows/.github/workflows/deploy.yaml@main
     with:
       app_name: catalog-comments-service
       caller_sha: ${{ github.sha }}
       repo: ${{ github.repository }}
       actor: ${{ github.actor }}
-      java_version: '15'
-      environment: 'prod'
-      cluster: 'digdir-fdk-prod'
+      environment: 'demo'
+      cluster: 'digdir-fdk-dev'
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GCP_SA_DIGDIR_FDK_GCR_KEY: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
-      DIGDIR_FDK_AUTODEPLOY: ${{ secrets.DIGDIR_FDK_PROD_AUTODEPLOY }}
+      DIGDIR_FDK_AUTODEPLOY: ${{ secrets.DIGDIR_FDK_DEV_AUTODEPLOY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
