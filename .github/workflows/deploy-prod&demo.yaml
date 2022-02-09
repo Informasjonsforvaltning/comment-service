@@ -25,7 +25,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   Deploy_to_demo:
-    needs: build-test-and-deploy-production
+    needs: Build_and_deploy_to_production
     name: Call reusable workflow if prod-deploy is successful
     uses: Informasjonsforvaltning/workflows/.github/workflows/deploy.yaml@main
     with:
