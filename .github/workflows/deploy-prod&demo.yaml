@@ -24,8 +24,8 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   deploy-to-demo:
-    name: Deploy latest production image to demo environment if prod-deploy is successful
     needs: build-test-and-deploy-production
+    name: Call reusable workflow if prod-deploy is successful
     uses: Informasjonsforvaltning/workflows/.github/workflows/deploy.yaml@main
     with:
       app_name: catalog-comments-service
