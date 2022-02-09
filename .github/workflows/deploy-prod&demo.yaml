@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Build_and_deploy_to_production:
-    name: Call reusable workflow on merge to main branch
+  build-and-deploy-to-production:
+    name: Deploy to production on merge to main branch
     uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy-maven.yaml@main
     with:
       app_name: catalog-comments-service
@@ -24,9 +24,9 @@ jobs:
       DIGDIR_FDK_AUTODEPLOY: ${{ secrets.DIGDIR_FDK_PROD_AUTODEPLOY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  Deploy_to_demo:
-    needs: build-test-and-deploy-production
-    name: Call reusable workflow if prod-deploy is successful
+  deploy-to-demo:
+    needs: build-and-deploy-to-production
+    name: Deploy to demo if prod-deploy is successful
     uses: Informasjonsforvaltning/workflows/.github/workflows/deploy.yaml@main
     with:
       app_name: catalog-comments-service
