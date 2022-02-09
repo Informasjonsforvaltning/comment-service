@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  Build_and_deploy_to_staging:
+  build-and-deploy-staging:
     name: Call reusable workflow when pull request is created
     if: github.event.pull_request.draft == false
     uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy-maven.yaml@main
