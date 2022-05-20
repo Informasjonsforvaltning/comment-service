@@ -8,10 +8,20 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.digdir.catalog_comments_service.model.Comment
 import no.digdir.catalog_comments_service.utils.ApiTestContext
+import no.digdir.catalog_comments_service.utils.COMMENT_0
+import no.digdir.catalog_comments_service.utils.COMMENT_1
+import no.digdir.catalog_comments_service.utils.COMMENT_TO_BE_CREATED
+import no.digdir.catalog_comments_service.utils.COMMENT_TO_BE_CREATED_1
+import no.digdir.catalog_comments_service.utils.COMMENT_TO_BE_DELETED
+import no.digdir.catalog_comments_service.utils.COMMENT_TO_BE_UPDATED
+import no.digdir.catalog_comments_service.utils.COMMENT_WRONG_USER
+import no.digdir.catalog_comments_service.utils.ORG_NUMBER
+import no.digdir.catalog_comments_service.utils.TOPIC_ID
+import no.digdir.catalog_comments_service.utils.WRONG_ORG_NUMBER
 import no.digdir.catalog_comments_service.utils.authorizedRequest
-import no.fdk.catalog_comments_service.utils.*
-import no.fdk.concept_catalog.utils.jwk.Access
-import no.fdk.concept_catalog.utils.jwk.JwtToken
+import no.digdir.catalog_comments_service.utils.*
+import no.digdir.catalog_comments_service.utils.jwk.Access
+import no.digdir.catalog_comments_service.utils.jwk.JwtToken
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -44,7 +54,7 @@ class CommentIntegration : ApiTestContext() {
 
     @Test
     fun `Unauthorized when access token is not included`() {
-        val rsp = authorizedRequest("/${ORG_NUMBER}/${TOPIC_ID}/comment", port, mapper.writeValueAsString(COMMENT_0), null, HttpMethod.POST)
+        val rsp = authorizedRequest("/$ORG_NUMBER/$TOPIC_ID/comment", port, mapper.writeValueAsString(COMMENT_0), null, HttpMethod.POST)
 
         assertEquals(HttpStatus.UNAUTHORIZED.value(), rsp["status"])
     }
@@ -52,7 +62,7 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Forbidden when comment has non write access orgId`() {
         val rsp = authorizedRequest(
-            "/${WRONG_ORG_NUMBER}/${TOPIC_ID}/comment", port, mapper.writeValueAsString(COMMENT_0),
+            "/$WRONG_ORG_NUMBER/$TOPIC_ID/comment", port, mapper.writeValueAsString(COMMENT_0),
             JwtToken(Access.ORG_WRITE).toString(), HttpMethod.POST
         )
 
@@ -62,18 +72,18 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Ok - Created - for read access`() {
         val before = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, mapper.writeValueAsString(COMMENT_TO_BE_CREATED),
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, mapper.writeValueAsString(COMMENT_TO_BE_CREATED),
             JwtToken(Access.ORG_READ).toString(), HttpMethod.POST
         )
         assertEquals(HttpStatus.CREATED.value(), rsp["status"])
 
         val after = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 
@@ -85,18 +95,18 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Ok - Created - for write access`() {
         val before = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, mapper.writeValueAsString(COMMENT_TO_BE_CREATED_1),
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, mapper.writeValueAsString(COMMENT_TO_BE_CREATED_1),
             JwtToken(Access.ORG_WRITE).toString(), HttpMethod.POST
         )
         assertEquals(HttpStatus.CREATED.value(), rsp["status"])
 
         val after = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 
@@ -108,7 +118,7 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Forbidden for read access of comments when non read access orgId`() {
         val rsp = authorizedRequest(
-            "/${WRONG_ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$WRONG_ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 
@@ -118,7 +128,7 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Read access of comments`() {
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 
@@ -128,7 +138,7 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Update unauthorized when access token is not included`() {
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_0.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            "/$ORG_NUMBER/$TOPIC_ID/comment/${COMMENT_0.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
             null, HttpMethod.PUT
         )
 
@@ -138,7 +148,9 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Update forbidden when comment has another user`() {
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_WRONG_USER.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            "/$ORG_NUMBER/$TOPIC_ID/comment/${COMMENT_WRONG_USER.id}", port, mapper.writeValueAsString(
+                COMMENT_TO_BE_UPDATED
+            ),
             JwtToken(Access.ORG_READ).toString(), HttpMethod.PUT
         )
 
@@ -148,7 +160,7 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Ok - Updated - for read access`() {
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_0.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            "/$ORG_NUMBER/$TOPIC_ID/comment/${COMMENT_0.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
             JwtToken(Access.ORG_READ).toString(), HttpMethod.PUT
         )
         assertEquals(HttpStatus.OK.value(), rsp["status"])
@@ -160,7 +172,7 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Ok - Updated - for write access`() {
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_1.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
+            "/$ORG_NUMBER/$TOPIC_ID/comment/${COMMENT_1.id}", port, mapper.writeValueAsString(COMMENT_TO_BE_UPDATED),
             JwtToken(Access.ORG_WRITE).toString(), HttpMethod.PUT
         )
 
@@ -173,7 +185,7 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Delete forbidden when comment has another user`() {
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_WRONG_USER.id}", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment/${COMMENT_WRONG_USER.id}", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.DELETE
         )
 
@@ -183,12 +195,12 @@ class CommentIntegration : ApiTestContext() {
     @Test
     fun `Ok - Deleted - for read access`() {
         val before = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 
         val rsp = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment/${COMMENT_TO_BE_DELETED.id}", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment/${COMMENT_TO_BE_DELETED.id}", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.DELETE
         )
 
@@ -198,7 +210,7 @@ class CommentIntegration : ApiTestContext() {
         assertEquals(deletedComment, COMMENT_TO_BE_DELETED.id)
 
         val after = authorizedRequest(
-            "/${ORG_NUMBER}/${TOPIC_ID}/comment", port, "",
+            "/$ORG_NUMBER/$TOPIC_ID/comment", port, "",
             JwtToken(Access.ORG_READ).toString(), HttpMethod.GET
         )
 

@@ -1,4 +1,4 @@
-package no.fdk.catalog_comments_service.utils
+package no.digdir.catalog_comments_service.utils
 
 import no.digdir.catalog_comments_service.model.Comment
 import no.digdir.catalog_comments_service.model.UserDBO

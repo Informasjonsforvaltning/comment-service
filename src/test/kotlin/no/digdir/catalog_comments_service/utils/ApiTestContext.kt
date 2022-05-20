@@ -1,6 +1,5 @@
 package no.digdir.catalog_comments_service.utils
 
-import no.fdk.catalog_comments_service.utils.*
 import org.slf4j.LoggerFactory
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.boot.web.server.LocalServerPort
@@ -20,7 +19,9 @@ abstract class ApiTestContext {
     internal class Initializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
         override fun initialize(configurableApplicationContext: ConfigurableApplicationContext) {
             TestPropertyValues.of(
-                "spring.data.mongodb.uri=mongodb://$MONGO_USER:$MONGO_PASSWORD@localhost:${mongoContainer.getMappedPort(MONGO_PORT)}/$MONGO_DB_NAME?authSource=admin&authMechanism=SCRAM-SHA-1"
+                "spring.data.mongodb.uri=mongodb://$MONGO_USER:$MONGO_PASSWORD@localhost:${mongoContainer.getMappedPort(
+                    MONGO_PORT
+                )}/$MONGO_DB_NAME?authSource=admin&authMechanism=SCRAM-SHA-1"
             ).applyTo(configurableApplicationContext.environment)
         }
     }

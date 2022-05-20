@@ -7,7 +7,6 @@ import com.mongodb.client.MongoClients
 import no.digdir.catalog_comments_service.model.Comment
 import no.digdir.catalog_comments_service.model.UserDBO
 import no.digdir.catalog_comments_service.utils.ApiTestContext.Companion.mongoContainer
-import no.fdk.catalog_comments_service.utils.*
 import org.bson.codecs.configuration.CodecRegistries
 import org.bson.codecs.pojo.PojoCodecProvider
 import org.springframework.http.*
@@ -93,7 +92,9 @@ fun authorizedRequest(
 }
 
 fun populate() {
-    val connectionString = ConnectionString("mongodb://${MONGO_USER}:${MONGO_PASSWORD}@localhost:${mongoContainer.getMappedPort(MONGO_PORT)}/$MONGO_DB_NAME?authSource=admin&authMechanism=SCRAM-SHA-1")
+    val connectionString = ConnectionString("mongodb://$MONGO_USER:$MONGO_PASSWORD@localhost:${mongoContainer.getMappedPort(
+        MONGO_PORT
+    )}/$MONGO_DB_NAME?authSource=admin&authMechanism=SCRAM-SHA-1")
     val pojoCodecRegistry = CodecRegistries.fromRegistries(
         MongoClientSettings.getDefaultCodecRegistry(), CodecRegistries.fromProviders(
             PojoCodecProvider.builder().automatic(true).build()))
