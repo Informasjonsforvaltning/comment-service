@@ -2,7 +2,7 @@ package no.digdir.catalog_comments_service.utils
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import no.fdk.concept_catalog.utils.jwk.JwkStore
+import no.digdir.catalog_comments_service.utils.jwk.JwkStore
 
 const val LOCAL_SERVER_PORT = 5000
 

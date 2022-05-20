@@ -1,4 +1,4 @@
-package no.fdk.concept_catalog.utils.jwk
+package no.digdir.catalog_comments_service.utils.jwk
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

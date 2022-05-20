@@ -1,4 +1,4 @@
-package no.fdk.catalog_comments_service.unit
+package no.digdir.catalog_comments_service.unit
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -7,8 +7,8 @@ import no.digdir.catalog_comments_service.repository.UserDAO
 import no.digdir.catalog_comments_service.service.CommentService
 import no.digdir.catalog_comments_service.service.toDBO
 import no.digdir.catalog_comments_service.utils.ApiTestContext
-import no.fdk.catalog_comments_service.utils.COMMENT_0
-import no.fdk.catalog_comments_service.utils.COMMENT_1
+import no.digdir.catalog_comments_service.utils.COMMENT_0
+import no.digdir.catalog_comments_service.utils.COMMENT_1
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
