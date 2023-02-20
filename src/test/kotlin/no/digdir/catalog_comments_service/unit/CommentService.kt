@@ -1,7 +1,5 @@
 package no.digdir.catalog_comments_service.unit
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import no.digdir.catalog_comments_service.repository.CommentDAO
 import no.digdir.catalog_comments_service.repository.UserDAO
 import no.digdir.catalog_comments_service.service.CommentService
@@ -11,6 +9,8 @@ import no.digdir.catalog_comments_service.utils.COMMENT_0
 import no.digdir.catalog_comments_service.utils.COMMENT_1
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import kotlin.test.assertTrue
 
 @Tag("unit")
