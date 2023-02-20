@@ -3,9 +3,11 @@ package no.digdir.catalog_comments_service
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
+@EnableWebSecurity
 open class CommentApplication
 
 fun main(args: Array<String>) {
