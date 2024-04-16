@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>3.2.4</version>
         <relativePath/>
     </parent>
 
@@ -24,7 +24,7 @@
         <maven.compiler.source>${java.release}</maven.compiler.source>
         <maven.compiler.target>${java.release}</maven.compiler.target>
 
-        <kotlin.version>1.9.22</kotlin.version>
+        <kotlin.version>1.9.23</kotlin.version>
         <testcontainers.version>1.19.7</testcontainers.version>
     </properties>
 
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock-standalone</artifactId>
-            <version>3.4.2</version>
+            <version>3.5.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -176,7 +176,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
+                <version>0.8.12</version>
                 <executions>
                     <execution>
                         <id>before-unit-test-execution</id>
