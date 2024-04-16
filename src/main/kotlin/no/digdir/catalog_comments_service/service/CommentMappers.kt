@@ -6,7 +6,7 @@ import no.digdir.catalog_comments_service.model.UserDBO
 import java.time.LocalDateTime
 import java.util.*
 
-fun CommentDBO.toDTO(userDBO: Optional<UserDBO>): Comment =
+fun CommentDBO.toDTO(userDBO: UserDBO?): Comment =
     Comment(
         id = id,
         createdDate = createdDate,
@@ -16,7 +16,7 @@ fun CommentDBO.toDTO(userDBO: Optional<UserDBO>): Comment =
         comment = comment
     )
 
-fun Comment.toDBO(orgNr: String, id: String, userId: String): CommentDBO {
+fun Comment.toDBO(orgNr: String, id: String, userId: String?): CommentDBO {
     val newCreatedDate = LocalDateTime.now()
 
     return CommentDBO(

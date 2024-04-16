@@ -28,4 +28,14 @@ class CommentService: ApiTestContext() {
 
         assertTrue { result.size == 2 }
     }
+
+    @Test
+    fun `Get all comments by topic id without user id` () {
+        whenever(commentDAO.findCommentsByOrgNumberAndTopicId("246813579","topicId0"))
+            .thenReturn(listOf(COMMENT_0, COMMENT_1).map { it.toDBO("246813579","topicId0",null) })
+
+        val result = commentService.getCommentsByOrgNumberAndTopicId("246813579", "topicId0")
+
+        assertTrue { result.size == 2 }
+    }
 }
