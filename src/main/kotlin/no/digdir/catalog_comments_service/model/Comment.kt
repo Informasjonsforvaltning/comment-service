@@ -31,6 +31,6 @@ data class Comment(
     val lastChangedDate: LocalDateTime? = null,
     val topicId:String? = null,
     val orgNumber:String? = null,
-    var user:Optional<UserDBO>? = null,
+    var user:UserDBO? = null,
     val comment:String? = null
 )
