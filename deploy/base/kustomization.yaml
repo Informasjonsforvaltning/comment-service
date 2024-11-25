@@ -1,0 +1,10 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - catalog-comments-service-deployment.yaml
+  - catalog-comments-service-service.yaml
+images:
+  - name: catalog-comments-service
+    newName: ghcr.io/informasjonsforvaltning/catalog-comments-service
+    newTag: $(GIT_COMMIT_SHA)
