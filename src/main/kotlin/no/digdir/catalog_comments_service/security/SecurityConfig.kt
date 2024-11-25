@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2Res
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator
@@ -14,6 +15,7 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 
 @Configuration
+@EnableMethodSecurity
 open class SecurityConfig(
     @Value("\${application.cors.originPatterns}")
     val corsOriginPatterns: Array<String>

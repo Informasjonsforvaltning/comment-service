@@ -70,7 +70,7 @@ fun authorizedRequest(
     return try {
         val response = request.exchange(url, httpMethod, entity, String::class.java)
         mapOf(
-            "body" to response.body,
+            ("body" to response.body) as Pair<String, String>,
             "header" to response.headers.toString(),
             "status" to response.statusCode.value()
         )
